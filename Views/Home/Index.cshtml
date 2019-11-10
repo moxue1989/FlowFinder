@@ -1,0 +1,43 @@
+﻿@model IEnumerable<FlowFinder.Models.RouteModel>
+@{
+    ViewData["Title"] = "Flow Finder";
+}
+<ol class="breadcrumb">
+    <li class="breadcrumb-item active text-dark">Custom List: @ViewData["Key"]</li>
+</ol>
+<div class="row">
+    @foreach (var result in Model)
+{
+    <div class="col-lg-6 col-md-12">
+        <div class="bs-component">
+            <div class="card bg-light border-success">
+                <div class="card-header text-info">@result.Destination.Name: @result.Destination.DestinationName</div>
+
+                <ul class="list-group">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Transit time
+                        <span class="badge badge-primary">@result.TransitTime</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Travel Distance
+                        <span class="badge badge-info">@Math.Round(result.Distance, 2) KMs</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Savings
+                        <span class="badge badge-success">@Math.Round(result.Savings, 2) CAD</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Detailed Directions
+                        <a href="@result.DirectionsLink" target="_blank">Link</a>
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+        <br />
+    </div>
+}
+</div>
+
+
+

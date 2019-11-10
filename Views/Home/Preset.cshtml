@@ -1,0 +1,131 @@
+﻿@{
+    ViewData["Title"] = "Presets";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-3">
+            <input id="destname" type="text" class="form-control" placeholder="Name">
+        </div>
+        <div class="col-6">
+            <input id="destination" type="text" class="form-control" placeholder="New Destination">
+        </div>
+        <div class="col-3">
+            <button id="add" class="btn btn-primary btn-block">Add</button>
+        </div>
+    </div>
+</div>
+<br />
+<div class="container">
+    <h2>Destinations</h2>
+    <br />
+    <div id="list">
+
+    </div>
+    <div class="row">
+        <div class="col-9">
+            <input class="form-control" required id="key" placeholder="Custom Key" />
+        </div>
+        <div class="col-3">
+            <button class="btn btn-danger btn-block" id="save">Save</button>
+        </div>
+    </div>
+</div>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCNMHaMAuU0-jFY3dAbLrlT2nr6uzIkPWE&libraries=places"></script>
+
+<script>
+    google.maps.event.addDomListener(window, 'load', initialize);
+
+    function initialize() {
+        var input = document.getElementById('destination');
+        new google.maps.places.Autocomplete(input);
+    }
+
+    $("#add").click(function () {
+        addDest();
+    });
+
+    $("#save").click(function () {
+        if ($("#key").val() != "") {
+            savePreset();
+        }
+    });
+
+    function addDest() {
+        var name = $("#destname").val();
+        var dest = $("#destination").val();
+
+        if (name == "" || dest == "") {
+        } else {
+            $("#list").append('<div class="alert alert-dismissible alert-info">' +
+                '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                name + ': ' + dest + '</div></div>');
+        }
+
+        $("#destname").val('');
+        $("#destination").val('');
+    }
+
+    function addDest() {
+        var name = $("#destname").val();
+        var dest = $("#destination").val();
+
+        if (name == "" || dest == "") {
+        } else {
+            $("#list").append('<div class="alert alert-dismissible alert-info">' +
+                '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                '<t class="names">' + name + '</t>: <t class="dests">' + dest + '</t></div></div>');
+        }
+
+        $("#destname").val('');
+        $("#destination").val('');
+    }
+
+    function savePreset() {
+        var names = $(".names").map(function (i, obj) {
+            return obj.innerHTML;
+        }).get();
+
+        var dests = $(".dests").map(function (i, obj) {
+            return obj.innerHTML;
+        }).get();
+
+
+        console.log(names);
+        console.log(dests);
+
+        var destinations = [];
+
+        for (i = 0; i < names.length; i++) {
+            var dest = {
+                "Name": names[i],
+                "DestinationName": dests[i],
+            };
+
+            destinations.push(dest);
+        }
+
+        var data = {
+            "Key": $("#key").val(),
+            "Destinations": destinations
+        };
+
+        persist(data);
+    }
+
+    function persist(data) {
+        $.ajax({
+            type: "POST",
+            contentType: "application/json",
+            url: '/api/preset',
+            data: JSON.stringify(data),
+            dataType: "json",
+            success: function () {
+                window.location.replace("/home/index?origin = " + $("#origin").val() + "&key=" + data.Key);
+            },
+            error: function () {
+                window.location.replace("/home/index?origin = " + $("#origin").val() + "&key=" + data.Key);
+            }
+        });
+    }
+</script>
